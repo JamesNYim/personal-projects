@@ -4,8 +4,6 @@ def main():
     
     #Word stuff
     wordBank = ["teas", "poop", "milk", "boba", "cute", "home", "game", "rice"]
-    #testBank = ["boba"]
-    #wordBank = testBank
     wordLength = 4
     wordDict = {}
     for currentWord in wordBank:
@@ -18,17 +16,7 @@ def main():
                 currentWordDict[letter] = 1
        
         wordDict[currentWord] = currentWordDict
-        
-
-    for word in wordDict:
-       print("Word: " + word + " " +  "wordDict: " + str(wordDict[word]))        
-
-
-    
-    
-    
-   
-    
+               
     #Starting the game
     gameRunning = False
     letterFound = False
@@ -37,7 +25,6 @@ def main():
         if (userInput == "Ready"):
             print("Guess the 4 letter word!\n")
             guessWord = random.choice(wordBank)
-            guessWord = wordBank[3]
             gameRunning = True
         if (userInput == "help"):
             print("How to play Jank Wordle\n")
@@ -77,8 +64,6 @@ def main():
         
         #If the guessed word is incorrect
         if (not userInput == guessWord and rightSize):
-           
-            print(currentDict)
             for userIndex, userLetter in enumerate(userInput):
                 isIn = False
                 isPos = False
