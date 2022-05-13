@@ -1,17 +1,43 @@
 import random
+import copy
 def main():
+    
+    #Word stuff
     wordBank = ["teas", "poop", "milk", "boba", "cute", "home", "game", "rice"]
+    #testBank = ["boba"]
+    #wordBank = testBank
     wordLength = 4
-    gameRunning = False
-    letterFound = False
+    wordDict = {}
+    for currentWord in wordBank:
+        wordDict[currentWord] = {}
+        currentWordDict = {}
+        for letter in currentWord:
+            if letter in currentWordDict:
+                currentWordDict[letter] = currentWordDict[letter] + 1
+            else:
+                currentWordDict[letter] = 1
+       
+        wordDict[currentWord] = currentWordDict
+        
+
+    for word in wordDict:
+       print("Word: " + word + " " +  "wordDict: " + str(wordDict[word]))        
+
+
+    
+    
+    
+   
     
     #Starting the game
+    gameRunning = False
+    letterFound = False
     while (not gameRunning):
         userInput = input("\n\n\n\n\nWelcome to jank wordle! Type \"Ready\" when ready to start\nOr Type \"help\" for rules and how to play\n")
         if (userInput == "Ready"):
             print("Guess the 4 letter word!\n")
             guessWord = random.choice(wordBank)
-            #guessWord = wordBank[3]
+            guessWord = wordBank[3]
             gameRunning = True
         if (userInput == "help"):
             print("How to play Jank Wordle\n")
@@ -36,6 +62,8 @@ def main():
         userIndex = 0
         letterIn = False
         userInput = input("")
+        currentDict = copy.deepcopy(wordDict[guessWord])
+        
         #If the guessed word is correct
         if (userInput == guessWord):
             print("You are correct! The word was: " + guessWord)
@@ -49,27 +77,32 @@ def main():
         
         #If the guessed word is incorrect
         if (not userInput == guessWord and rightSize):
-            
+           
+            print(currentDict)
             for userIndex, userLetter in enumerate(userInput):
-                letterFound = False
-                for guessIndex, guessLetter in enumerate(guessWord):                    
-                    #If the letter is in the word AND in the right place
-                    if (userLetter == guessLetter and guessIndex == userIndex and not letterFound):
-                        letterIn = True
-                        answerWord += "[" + userLetter + "]"
-                        letterFound = True
-                   
-                    #If the letter is in the word but NOT in the right place
-                    elif (userLetter == guessLetter and not guessIndex == userIndex and not letterFound):
-                        letterIn = True
-                        answerWord += "(" + userLetter + ")"
-                        letterFound = True
-                
-                #If the letter isn't in the word
-                if (not letterIn):
-                        answerWord += "\"" + userLetter + "\""
-                
-                letterIn = False
+                isIn = False
+                isPos = False
+                for guessIndex, guessLetter in enumerate(guessWord):            
+                    #If the letter is in the word
+                    if (userLetter == guessLetter and currentDict[guessLetter] > 0):
+                        isIn = True
+        
+                        #If the letter is in the word AND in the right place
+                        if (guessIndex == userIndex):
+                            isPos = True
+                        currentDict[guessLetter] -= 1
+                        break
+
+                #Printing the word   
+                if (isIn and isPos):
+                    answerWord += "[" + userLetter + "]"
+                    
+                elif (isIn):
+                    answerWord += "(" + userLetter + ")"
+                    
+                else:
+                    answerWord += "\"" + userLetter + "\""
+            currentDict = wordDict[guessWord]
         print(answerWord)
 
         
