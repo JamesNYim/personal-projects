@@ -3,10 +3,8 @@
 ## Short description:
 	This program is a jank copy of the game Wordle
 
-## Build
-	type "make" on the command line with the Makefile provided in the directory
-
 ## Running
+	This game was made in Python. There is no nice GUI right now. Load this into your favorite IDE and start playing.
 
 ## Errors Handling:
 
