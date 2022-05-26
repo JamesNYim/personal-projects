@@ -1,5 +1,7 @@
 import random
 def drawDomino(dominoSet, playerSet):
+        if (len(dominoSet) == 0):
+            return
         randIndex = random.randint(0, len(dominoSet) - 1)
         playerSet.append(dominoSet[randIndex])
         dominoSet.remove(dominoSet[randIndex])
@@ -33,6 +35,13 @@ def playingDomino(playerSet, dominoBoard):
                     break
     return dominoPlayed
     
+def countingScore(playerSet):
+    score = 0
+    for domino in playerSet:
+        for number in domino:
+            score += number
+    return score
+
 
 
 def main():
@@ -80,11 +89,16 @@ def main():
 
     #Printing out win results
     if playerOneWin:
-        print("PlayerOne has won")
+        playerOneScore = countingScore(playerTwoSet)
+        print("Player one has won with a score of: ")
+        print(playerOneScore)
+
     if playerTwoWin:
-        print("Player Two has won")
+        playerTwoScore = countingScore(playerOneSet)
+        print("Player two has won with a score of: ")
+        print(playerTwoScore)
     
-    print(dominoPlayBoard)
+    
         
 
 
