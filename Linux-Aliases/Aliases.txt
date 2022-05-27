@@ -1,0 +1,19 @@
+
+#Personal Aliases
+
+#Git Status
+alias gst="git status"
+
+#Getting into .bashrc
+alias bopen="vi ~/.bashrc"
+
+#Updating .bashrc
+alias bupdate="source ~/.bashrc"
+
+#Opening last edited file
+reopen()
+{
+        lastOpened=$(ls -lt --time atime | sed -n '2p' | awk '{print $9}');
+        vi $lastOpened
+
+}
