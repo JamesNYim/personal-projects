@@ -37,6 +37,26 @@ def playingDomino(playerSet, dominoBoard):
                 dominoPlayed = True
                 break
     return dominoPlayed
+
+def pairStrat(playerSet, dominoSet, dominoBoard):
+    
+    #Creating pair set
+    pairSet = []
+    for domino in playerSet:
+        if (domino[0] == domino[1]):
+            pairSet.append(domino)
+            playerSet.remove(domino)
+
+    #playing a domino from set
+    hasPlayed = playingDomino(pairSet, dominoBoard)
+    if not hasPlayed:
+        hasPlayed = playingDomino(playerSet, dominoBoard)
+        if not hasPlayed:
+            drawDomino(dominoSet, playerSet)
+            playingDomino(playerSet, dominoBoard)
+    return hasPlayed
+
+
     
 def countingScore(playerSet):
     score = 0
@@ -75,10 +95,7 @@ def playGame():
             playingDomino(playerOneSet, dominoPlayBoard)
 
         #Player Two Turn
-        dominoPlayed = playingDomino(playerTwoSet, dominoPlayBoard)
-        if not dominoPlayed:
-            drawDomino(dominoSet, playerTwoSet)
-            playingDomino(playerTwoSet, dominoPlayBoard)
+        pairStrat(playerTwoSet, dominoSet, dominoPlayBoard)
 
         #Checking if there is a stalemate
         if not dominoPlayed:
@@ -100,20 +117,37 @@ def playGame():
             break
 
     #Printing out win results
+    gameResult = 0
     if playerOneWin:
         playerOneScore = countingScore(playerTwoSet)
-        print("Player one has won with a score of: ")
-        print(playerOneScore)
+        #print("Player one has won with a score of: ")
+        #print(playerOneScore)
+        gameResult = 1
+        
 
     if playerTwoWin:
         playerTwoScore = countingScore(playerOneSet)
-        print("Player two has won with a score of: ")
-        print(playerTwoScore)
+        #print("Player two has won with a score of: ")
+        #print(playerTwoScore)
+        gameResult = -1
+    
+    return gameResult
+       
    
+    return 
 
 def main():
+    playerOneWinCount = 0
+    playerTwoWinCount = 0
     for i in range(100):
-        playGame()
+        gameResult = playGame()
+        if (gameResult == 1):
+            playerOneWinCount += 1
+        elif (gameResult == -1):
+            playerTwoWinCount += 1
+    
+    resultString = "Player One won " + str(playerOneWinCount) + " times\n" + "Player Two won: " + str(playerTwoWinCount) + " times"
+    print(resultString)
 
 if __name__ == "__main__":
     main()
