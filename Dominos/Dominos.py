@@ -38,6 +38,33 @@ def playingDomino(playerSet, dominoBoard):
                 break
     return dominoPlayed
 
+def dumbStrat(playerSet, dominoSet, dominoBoard):
+    dominoPlayed = playingDomino(playerSet, dominoBoard)
+    if not dominoPlayed:
+        drawDomino(dominoSet, playerSet)
+        playingDomino(playerSet, dominoBoard)
+    return dominoPlayed
+
+def valueStrat(playerSet, dominoSet, dominoBoard):
+    
+    #Sorting the array
+    for i in range(1, len(playerSet)):
+        currentDominoValue = playerSet[i][0] + playerSet[i][1]
+        j = i - 1
+        prevCurrentDominoValue = playerSet[j][0] + playerSet[j][1]
+        if (currentDominoValue > prevCurrentDominoValue):
+            holderDomino = playerSet[j]
+            playerSet[j] = playerSet[i]
+            playerSet[i] = holderDomino
+        
+
+    dominoPlayed = dumbStrat(playerSet, dominoSet, dominoBoard)
+    return dominoPlayed
+
+
+
+
+
 def pairStrat(playerSet, dominoSet, dominoBoard):
     
     #Creating pair set
@@ -89,16 +116,13 @@ def playGame():
     while (not gameEnded):
 
         #Player One Turn
-        dominoPlayed = playingDomino(playerOneSet, dominoPlayBoard)
-        if not dominoPlayed:
-            drawDomino(dominoSet, playerOneSet)
-            playingDomino(playerOneSet, dominoPlayBoard)
+        playerOnePlayed = dumbStrat(playerOneSet, dominoSet, dominoPlayBoard)
 
         #Player Two Turn
-        pairStrat(playerTwoSet, dominoSet, dominoPlayBoard)
+        playerTwoPlayed = valueStrat(playerTwoSet, dominoSet, dominoPlayBoard)
 
         #Checking if there is a stalemate
-        if not dominoPlayed:
+        if not playerOnePlayed and not playerTwoPlayed:
             if (len(dominoSet) == 0):
                 gameEnded = True
                 if (countingScore(playerOneSet) > countingScore(playerTwoSet)):
