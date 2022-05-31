@@ -1,5 +1,7 @@
 from itertools import count
 import random
+import matplotlib.pyplot as plt
+import numpy as np
 def drawDomino(dominoSet, playerSet):
         if (len(dominoSet) == 0):
             return
@@ -119,7 +121,7 @@ def playGame():
         playerOnePlayed = dumbStrat(playerOneSet, dominoSet, dominoPlayBoard)
 
         #Player Two Turn
-        playerTwoPlayed = valueStrat(playerTwoSet, dominoSet, dominoPlayBoard)
+        playerTwoPlayed = pairStrat(playerTwoSet, dominoSet, dominoPlayBoard)
 
         #Checking if there is a stalemate
         if not playerOnePlayed and not playerTwoPlayed:
@@ -169,6 +171,24 @@ def main():
             playerOneWinCount += 1
         elif (gameResult == -1):
             playerTwoWinCount += 1
+    
+    #Printing bar graph
+    #plt.style.use('_mpl-gallery')
+
+    # make data:
+    np.random.seed(3)
+    y = playerOneWinCount
+    z = playerTwoWinCount
+
+    # plot
+    plt.bar(1, playerOneWinCount)
+    plt.bar(2, playerTwoWinCount)
+
+    plt.xlabel("Blue: Control strategy\nOrange: Pair Strategy")
+    plt.ylabel("Number of Games Won")
+    plt.xticks([])
+    plt.tight_layout()
+    plt.show()
     
     resultString = "Player One won " + str(playerOneWinCount) + " times\n" + "Player Two won: " + str(playerTwoWinCount) + " times"
     print(resultString)
