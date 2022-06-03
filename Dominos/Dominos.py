@@ -96,7 +96,7 @@ def countingScore(playerSet):
 
 
 
-def playGame():
+def playGame(playerToRecord):
     #Making the set of dominos
     dominoSet = [[0, 0], [0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[2,2],[2,3],[2,4],[2,5],[2,6],[3,3],[3,4],[3,5],[3,6],[4,4],[4,5],[4,6],[5,5],[5,6],[6,6]]
 
@@ -121,7 +121,7 @@ def playGame():
         playerOnePlayed = dumbStrat(playerOneSet, dominoSet, dominoPlayBoard)
 
         #Player Two Turn
-        playerTwoPlayed = pairStrat(playerTwoSet, dominoSet, dominoPlayBoard)
+        playerTwoPlayed = valueStrat(playerTwoSet, dominoSet, dominoPlayBoard)
 
         #Checking if there is a stalemate
         if not playerOnePlayed and not playerTwoPlayed:
@@ -144,6 +144,8 @@ def playGame():
 
     #Printing out win results
     gameResult = 0
+    playerOneScore = 0
+    playerTwoScore = 0
     if playerOneWin:
         playerOneScore = countingScore(playerTwoSet)
         #print("Player one has won with a score of: ")
@@ -157,21 +159,28 @@ def playGame():
         #print(playerTwoScore)
         gameResult = -1
     
-    return gameResult
-       
-   
-    return 
+    if (playerToRecord == 1):
+        return playerOneScore
+    elif (playerToRecord == 2):
+        return playerTwoScore
+    else:
+        return 0
 
 def main():
     playerOneWinCount = 0
     playerTwoWinCount = 0
+    playerOneAverageScore = 0
+    gameResult = 0
+    gameResult2 = 0
     for i in range(100):
-        gameResult = playGame()
-        if (gameResult == 1):
-            playerOneWinCount += 1
-        elif (gameResult == -1):
-            playerTwoWinCount += 1
+        gameResult += playGame(1)
+    playerOneAverageScore = gameResult / 100
+    for i in range(100):
+        gameResult2 += playGame(2)
+    playerTwoAverageScore = gameResult2 / 100
     
+    resultString = "Player One average score is " + str(playerOneAverageScore) + "\n" + "Player Two average score is: " + str(playerTwoAverageScore)
+    print(resultString)
     #Printing bar graph
     #plt.style.use('_mpl-gallery')
 
@@ -181,17 +190,17 @@ def main():
     z = playerTwoWinCount
 
     # plot
-    plt.bar(1, playerOneWinCount)
-    plt.bar(2, playerTwoWinCount)
+    plt.bar(1, playerOneAverageScore)
+    plt.bar(2, playerTwoAverageScore)
 
-    plt.xlabel("Blue: Control strategy\nOrange: Pair Strategy")
-    plt.ylabel("Number of Games Won")
+    plt.title("Control average score is " + str(playerOneAverageScore) + "\n" + "Value strategy average score is: " + str(playerTwoAverageScore) + "\n")
+    plt.xlabel("Blue: Control strategy\nOrange: Value Strategy")
+    plt.ylabel("Score ")
     plt.xticks([])
     plt.tight_layout()
     plt.show()
     
-    resultString = "Player One won " + str(playerOneWinCount) + " times\n" + "Player Two won: " + str(playerTwoWinCount) + " times"
-    print(resultString)
+    
 
 if __name__ == "__main__":
     main()
