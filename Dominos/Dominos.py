@@ -1,7 +1,14 @@
+##-----------------------##
+# Code by James Yim
+# For Stats 80A Final
+##-----------------------##
+
 from itertools import count
 import random
 import matplotlib.pyplot as plt
 import numpy as np
+
+#Drawing a domino from the domino set
 def drawDomino(dominoSet, playerSet):
         if (len(dominoSet) == 0):
             return
@@ -9,6 +16,7 @@ def drawDomino(dominoSet, playerSet):
         playerSet.append(dominoSet[randIndex])
         dominoSet.remove(dominoSet[randIndex])
 
+#Placing a domino onto the board
 def playingDomino(playerSet, dominoBoard):
     dominoPlayed = False
     for playDomino in playerSet:
@@ -40,6 +48,7 @@ def playingDomino(playerSet, dominoBoard):
                 break
     return dominoPlayed
 
+#Control Strategy (loops through and plays first available domino)
 def dumbStrat(playerSet, dominoSet, dominoBoard):
     dominoPlayed = playingDomino(playerSet, dominoBoard)
     if not dominoPlayed:
@@ -47,6 +56,7 @@ def dumbStrat(playerSet, dominoSet, dominoBoard):
         playingDomino(playerSet, dominoBoard)
     return dominoPlayed
 
+#Strategy for prioritizing high value dominos
 def valueStrat(playerSet, dominoSet, dominoBoard):
     
     #Sorting the array
@@ -66,7 +76,7 @@ def valueStrat(playerSet, dominoSet, dominoBoard):
 
 
 
-
+#Strategy for prioritizing domino pairs
 def pairStrat(playerSet, dominoSet, dominoBoard):
     
     #Creating pair set
@@ -87,6 +97,7 @@ def pairStrat(playerSet, dominoSet, dominoBoard):
 
 
     
+#Getting the score of a hand
 def countingScore(playerSet):
     score = 0
     for domino in playerSet:
@@ -146,6 +157,8 @@ def playGame(playerToRecord):
     gameResult = 0
     playerOneScore = 0
     playerTwoScore = 0
+    
+    #If player one wins
     if playerOneWin:
         playerOneScore = countingScore(playerTwoSet)
         #print("Player one has won with a score of: ")
@@ -153,12 +166,14 @@ def playGame(playerToRecord):
         gameResult = 1
         
 
+    #if player two wins
     if playerTwoWin:
         playerTwoScore = countingScore(playerOneSet)
         #print("Player two has won with a score of: ")
         #print(playerTwoScore)
         gameResult = -1
     
+    #Checking which player score to return (For average score)
     if (playerToRecord == 1):
         return playerOneScore
     elif (playerToRecord == 2):
@@ -172,6 +187,8 @@ def main():
     playerOneAverageScore = 0
     gameResult = 0
     gameResult2 = 0
+    
+    #Running the game (This specific example is to get the average score)
     for i in range(100):
         gameResult += playGame(1)
     playerOneAverageScore = gameResult / 100
@@ -179,16 +196,10 @@ def main():
         gameResult2 += playGame(2)
     playerTwoAverageScore = gameResult2 / 100
     
+    #Printing to terminal
     resultString = "Player One average score is " + str(playerOneAverageScore) + "\n" + "Player Two average score is: " + str(playerTwoAverageScore)
     print(resultString)
-    #Printing bar graph
-    #plt.style.use('_mpl-gallery')
-
-    # make data:
-    np.random.seed(3)
-    y = playerOneWinCount
-    z = playerTwoWinCount
-
+    
     # plot
     plt.bar(1, playerOneAverageScore)
     plt.bar(2, playerTwoAverageScore)
