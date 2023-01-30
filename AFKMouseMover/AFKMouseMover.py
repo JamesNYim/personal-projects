@@ -19,7 +19,6 @@ def main():
 		
 		#If the mouse has moved
 		else:
-			
 			timeAFK = 0
 			mouseCoords = pygui.position()
 
