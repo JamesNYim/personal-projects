@@ -602,7 +602,7 @@ BigInteger operator+=( BigInteger& A, const BigInteger& B )
 // Returns the difference A-B.
 BigInteger operator-( const BigInteger& A, const BigInteger& B )
 {
-	return A.sub(B);
+	return A.BigInteger::sub(B);
 }
 
 // operator-=()
