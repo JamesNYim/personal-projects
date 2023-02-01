@@ -23,6 +23,14 @@ using namespace std;
 #define BASE 1000000000
 #define POWER 9
 
+//Helper Function to compute base
+ListElement pow10(int x)
+{
+	return x == 0 ? 1: 10* pow10(x - 1);
+}
+
+const int power = 9;
+const ListElement base = pow10(power);
 //---= Constructors & Destructors =---
 
 //Constructing an empty Big Number
@@ -409,74 +417,57 @@ BigInteger BigInteger::add(const BigInteger& n) const
 //using for helper function testing
 BigInteger BigInteger::sub(const BigInteger& n) const
 {
-	//Copying Lists
-	List thisDigits = this->digits;
-	List nDigits = n.digits;
-
-	//Copying Big Integers
-	BigInteger thisNum = *this;
-	BigInteger nNum = n;
-
-	//Checking the signs
-	int thisSign = this->signum;
-	int nSign = n.signum;
-	bool diffSign = false;
-	if (thisSign != nSign)
-	{
-		diffSign = true;
-	}
-	//Subtracting Lists
-	List listDifference;
-	int signDifference = 0;
+	BigInteger A = *this;
+	BigInteger B = n;
 	BigInteger difference;
-	
-	//Comparing numbers
-	thisNum.signum = 1;
-	nNum.signum = 1;
-	int numCompare = thisNum.compare(nNum);
+	int diffSign = A.sign();
 
-	//If sign is the same
-	if (diffSign == false)
+	//If A and B have same sign
+	if (A.sign() == B.sign())
 	{
-		if (numCompare == 1)
+		if (A > B)
 		{
-			signDifference = 1;
-			sumList(listDifference, thisDigits, nDigits, -1);
+			difference.signum = 1;
+			if (diffSign == 1)
+			{
+				sumList(difference.digits, A.digits, B.digits, -1);
+			}
+			else
+			{
+				sumList(difference.digits, B.digits, A.digits, -1);
+			}
 		}
-		else if (numCompare == -1)
+		else if (A < B)
 		{
-			signDifference = -1;
-			sumList(listDifference, nDigits, thisDigits, -1);
+			difference.signum = -1;
+			if (diffSign == 1)
+			{
+				sumList(difference.digits, B.digits, A.digits, -1);
+			}
+			else
+			{
+				sumList(difference.digits, A.digits, B.digits, -1);
+			}
 		}
 		else
 		{
+			difference.signum = 0;
 			return difference;
 		}
 	}
 
-	//If sign is difference
-	if (diffSign == true)
+	else
 	{
-		signDifference = thisSign;
-		if (numCompare == 1)
-                {
-                        sumList(listDifference, thisDigits, nDigits, 1);
-                }
-                else if (numCompare == -1)
-                {
-                        sumList(listDifference, nDigits, thisDigits, 1);
-                }
-                else
-                {
-			sumList(listDifference, nDigits, thisDigits, 1);
-                }
+		sumList(difference.digits, A.digits, B.digits, 1);
+		difference.signum = A.signum;
 	}
-	
-	//Setting BigInteger
-	difference.signum = signDifference;
-	difference.digits = listDifference;
+
+	normalizeList(difference.digits);
 	return difference;
 }
+
+
+
 
 //Multiplying two Big Integers
 BigInteger BigInteger::mult(const BigInteger& n) const
