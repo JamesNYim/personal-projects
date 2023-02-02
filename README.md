@@ -1,11 +1,12 @@
 # the-boba-shop
 
-*Grab some boba and look at some projects*
+*HK Milk Tea & Code*
 
 ## Description
 
-This repository is full of personal projects using the skills I have learned
+Here are some personal projects 
 
 ## Notes
 
+Some of these projects are inspired fron school projects
 Some of these projects are unfinished or currently in progress
