@@ -1,6 +1,6 @@
 # the-boba-shop
 
-*HK Milk Tea & Code*
+*Milk Tea & Code*
 
 ## Description
 
