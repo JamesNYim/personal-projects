@@ -86,7 +86,7 @@ BigInteger::BigInteger(std::string s)
 	}
 
 	//Looping through getting number
-	for (size_t i = startingIndex; i < s.size() - 1; i = i)
+	for (size_t i = startingIndex; i < s.size();)
 
 	{
 		std::string nodeValue;
@@ -102,7 +102,7 @@ BigInteger::BigInteger(std::string s)
 		}
 		digits.insertBefore(stol(nodeValue));
 	}
-	
+
 	//Getting rid of leading zeros
 	digits.moveFront();
 	while (digits.position() < digits.length())
