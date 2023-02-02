@@ -548,23 +548,55 @@ BigInteger BigInteger::mult(const BigInteger& n) const
 //to_string()
 std::string BigInteger::to_string()
 {
-	List thisDigits = this->digits;
-	std::string s = "";
-	if (this->signum == 0)
-	{
-		return "0";
-	}
-	if (this->signum == -1)
-	{
-		s += "-";
-	}
-	thisDigits.moveFront();
-	while (thisDigits.position() < thisDigits.length())
-	{
-		s += std::to_string(thisDigits.moveNext());
-	}
-	return s;
+	std::string s = "", ze, ze2;
+    std::string::size_type t;
+    int x;
+
+    // add negative sign to string if number is negative
+    if (sign() == -1) {
+        s += "-";
+    }
+
+    // remove leading zeros
+    digits.moveFront();
+    while (digits.position() != digits.length()) {
+        if (digits.peekNext() != 0) {
+            break;
+        }
+        digits.moveNext();
+    }
+
+    // print out zero if the number is zero
+    if (digits.position() == digits.length()) {
+        s = "0";
+        return s;
+    }
+
+    // reload zeros
+    for (int i = 0; i < power; i++) {
+        ze += "0";
+    }
+
+    // format output
+    while (digits.position() != digits.length()) {
+        x = digits.moveNext();
+        if (x == 0 && digits.position() != 1) {
+            s += ze;
+        } else if (x < base && digits.position() != 1) {
+            t = (std::to_string(x)).length();
+            while (t < power) {
+                ze2 += "0";
+                t++;
+            }
+            s += ze2 + std::to_string(x);
+            ze2 = "";
+        } else {
+            s += std::to_string(x);
+        }
+    }
+    return s;
 }
+
 
 
 //---= Overriden Operators =----

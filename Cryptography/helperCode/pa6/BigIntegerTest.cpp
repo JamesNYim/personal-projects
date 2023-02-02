@@ -142,11 +142,14 @@ int main()
 	{
 		cout << "positive add is good" << endl;
 	}
-	BigInteger num1 = BigInteger("100");
-	BigInteger num2 = BigInteger("10");
-	BigInteger num3 = numA - numB;
-	cout << numA << " - " << numB << " = " << num3 << endl;
+	BigInteger num1 = BigInteger("2398472984729847298473289472349827489273489274");
+	BigInteger num2 = BigInteger("40853095835093485309853490583905835903853908539083");
+	BigInteger num3 = num2 - num1;
+	cout << num2 << " - " << num1 << " = " << num3 << endl;
 
+
+	BigInteger num4 = num2 * num1;
+	cout << num2 << " * " << num1 << " = " << num4 << endl;
 	cout << "\n" << "----------= End Test =----------" << "\n" << endl;
 
 
