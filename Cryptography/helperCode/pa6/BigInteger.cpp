@@ -63,7 +63,6 @@ BigInteger::BigInteger(std::string s)
 	else if (s[0] == 0)
 	{
 		signum = 0;
-		return;
 	}
 	else
 	{
@@ -105,6 +104,10 @@ BigInteger::BigInteger(std::string s)
 
 	//Getting rid of leading zeros
 	digits.moveFront();
+	if (digits.length() == 1) //If we have a single 0
+	{
+		return;
+	}
 	while (digits.position() < digits.length())
 	{
 		if (digits.moveNext() == 0)
@@ -316,6 +319,32 @@ void normalizeList(List& L)
         L = normList;
 }
 
+// helper function that normalize mult function
+void normalizeMult(List& l) {
+    long carry = 0;
+    ListElement x;
+    l.moveBack();
+    while (l.position() > 0) {
+        x = l.movePrev();
+        if (carry != 0) {
+            x += carry;
+            carry = 0;
+        }
+
+        if (x >= base) {
+            carry = x / base;
+            x %= base;
+            l.setAfter(x);
+        } else {
+            l.setAfter(x);
+        }
+    }
+
+    if (carry != 0) {
+        l.moveFront();
+        l.insertBefore(carry);
+    }
+}
 // shiftList()
 // Prepends p zero digits to L, multiplying L by base^p. Used by mult().
 void shiftList(List& L, int p)
@@ -466,35 +495,53 @@ BigInteger BigInteger::sub(const BigInteger& n) const
 	return difference;
 }
 
-
-
-
 //Multiplying two Big Integers
 BigInteger BigInteger::mult(const BigInteger& n) const
 {
-	//Intializing Product Big Int
+	//Variables
 	BigInteger product;
-
-	//Copying Big Integers
-	BigInteger thisInt = *this;
-	BigInteger nInt = n;
-
-	//Signs
-	if (thisInt.signum == -1 || n.signum == -1)
+	BigInteger A = *this;
+	BigInteger B = n;
+	ListElement digit;
+	int shift = 0;
+	List temp;
+	
+	//If we have a 0 term
+	if (A.sign() == 0 || B.sign() == 0)
 	{
-		product.signum = -1;
+		return BigInteger(0);
 	}
-	else if (thisInt.signum == 0 || n.signum == 0)
+	B.digits.moveBack();
+	while (B.digits.position() > 0)
 	{
-		return product;
+		List temp2 = A.digits;
+		List temp3;
+
+		digit = B.digits.movePrev();
+		scalarMultList(temp2, digit);
+		shiftList(temp2, shift);
+		sumList(temp3, temp, temp2, 1);
+		normalizeMult(temp3);
+
+		if (B.digits.position() == 0) //If we get to the first digit of the number
+		{
+			product.digits = temp3;
+		}
+		temp = temp3;
+		shift++;
 	}
-	else
+
+	//Determining sign of product
+	if (A.signum == B.signum)
 	{
 		product.signum = 1;
 	}
+	else
+	{
+		product.signum = -1;
+	}
 
-	return *this;
-
+	return product;
 }
 //---= Other Functions =---
 
