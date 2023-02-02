@@ -7,8 +7,8 @@
 	type "make" on the command line with the Makefile provided in the directory
 
 ## Running
-	This current version's Arithmetic does not work. It is incomplete
-	The addition function works as intended, the subtraction function works but not for subtraction assign.
+	To see the tests run make and run ./BigIntegerTest	
+
 
 ## Cleaning
 	Alternatively type "clean" on the command line, using Makefile provided
