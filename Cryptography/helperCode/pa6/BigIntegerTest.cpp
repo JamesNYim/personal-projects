@@ -138,19 +138,18 @@ int main()
 	BigInteger sum = BigInteger("999999999992340923482304982340928420934823049820942828023226030133334615354412223765215033224");
 	BigInteger difference = BigInteger("999999999992340923482304982340928420934823049820942781833579938285630003609686346420515385740");
 	
-	BigInteger num1 = BigInteger("3");
-	BigInteger num2 = BigInteger("1");
-	
 	if (numA + numB == sum)
 	{
 		cout << "positive add is good" << endl;
 	}
-	if (numA - numB == difference)
-	{
-		cout << "positive sub is good" << endl;
-	}
+	BigInteger num1 = BigInteger("2398472984729847298473289472349827489273489274");
+	BigInteger num2 = BigInteger("40853095835093485309853490583905835903853908539083");
+	BigInteger num3 = num2 - num1;
+	cout << num2 << " - " << num1 << " = " << num3 << endl;
 
-	cout << "num1(3) - num2(1) = " << num1 - num2 << endl;
+
+	BigInteger num4 = num2 * num1;
+	cout << num2 << " * " << num1 << " = " << num4 << endl;
 	cout << "\n" << "----------= End Test =----------" << "\n" << endl;
 
 
