@@ -6,7 +6,7 @@ REMOVE = rm -f
 ALL_SOURCE = $(wildcard *.cpp)
 COMMON_SOURCE = ${shell grep -L "int main(" ${ALL_SOURCE}}
 COMMON_OBJECT = $(COMMON_SOURCE:%.cpp=%.o)
-EXECS = #
+EXECS = Main
 
 .PHONY: all clean debug GDB
 
