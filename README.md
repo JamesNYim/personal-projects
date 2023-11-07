@@ -1,6 +1,6 @@
-# the-boba-shop
+# Personal Code Projects
 
-*Milk Tea & Code*
+*Here are some original code projects I have made*
 
 ## Description
 
