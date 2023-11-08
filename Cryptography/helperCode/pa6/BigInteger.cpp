@@ -118,17 +118,20 @@ BigInteger::BigInteger(string s)
     std::string num = "";
     List L;
     size_t max = 0;
-    size_t curr_digits = s.length();
+    size_t currentDigits = s.length();
+
     // Divide the input string into chunks of POWER digits and convert each chunk to a number
-    while (max < s.length() / POWER) {
-        num = s.substr(curr_digits - POWER, POWER);
+    while (max < s.length() / POWER) 
+	{
+        num = s.substr(currentDdigits - POWER, POWER);
         digits.insertAfter(std::stol(num, nullptr, 10));
-        curr_digits = curr_digits - POWER;
+        currentDigits = currentDigits - POWER;
         max++;
     }
+
     // If there are remaining digits, convert them to a number and insert them
-    if (curr_digits > 0) {
-        num = s.substr(0, curr_digits);
+    if (currentDigits > 0) {
+        num = s.substr(0, currentDigits);
         digits.insertAfter(std::stol(num, nullptr, 10));
     }
 
