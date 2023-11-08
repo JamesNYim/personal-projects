@@ -46,14 +46,16 @@ List tempMult(long s, List *b, int* ctr)
     return L;
 }
 
-// BigInteger Constructors---------------------------------------------------------------------------------------------------------
+// -= Constructors =-
+
+// Blank Constructor
 BigInteger::BigInteger() 
 {
     signum = 0;
     digits = List();
 }
 
-// Constructor that creates a new BigInteger from the long value x.
+// Long Constructor
 BigInteger::BigInteger(long x) 
 {
     // Handle zero separately
@@ -81,6 +83,7 @@ BigInteger::BigInteger(long x)
     }
 }
 
+// String Constructor
 BigInteger::BigInteger(string s) 
 {
 	// If there is an empty string
@@ -138,7 +141,9 @@ BigInteger::BigInteger(string s)
     delZero(&digits);  // Remove leading zeros from the digits list
 }
 
-BigInteger::BigInteger(const BigInteger& N) {
+// Big int constructor
+BigInteger::BigInteger(const BigInteger& N) 
+{
     this->signum = N.signum;
     this->digits = N.digits;
 }
