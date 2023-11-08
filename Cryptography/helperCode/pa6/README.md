@@ -1,13 +1,13 @@
 # Assignment 6: Big big big numbers
 
 ## Short description:
+	This class is able to add subtract and multiply really big numbers. Division is not supported in this version
 
 
 ## Build
 	type "make" on the command line with the Makefile provided in the directory
 
 ## Running
-	To see the tests run make and run ./BigIntegerTest	
 
 
 ## Cleaning
