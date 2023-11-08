@@ -1,714 +1,488 @@
-//------------------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------------------
-// James Yim
-// Cruz ID: jnyim
-// #1798845
-// CSE 101-01 Tantalo
-// Programming Assignment 6
-// BigInteger.cpp
-//------------------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------------------
-#include <iostream>
-#include <string>
-#include <stdexcept>
-#include "List.h"
 #include "BigInteger.h"
+#include "List.h"
+
+#include <cctype>
+#include <cmath>
+#include <stdexcept>
 
 using namespace std;
 
+const ListElement BASE  = 1000000000;  // 10^(power)
+const int         POWER = 9;           // log_10(base)
 
-//Defininitions
+// -=Helper Functions=-
 
-
-#define BASE 1000000000
-#define POWER 9
-
-//Helper Function to compute base
-ListElement pow10(int x)
+// Remove leading zeros
+void delZero( List* L) 
 {
-	return x == 0 ? 1: 10* pow10(x - 1);
+    L->moveFront();
+    while (L->length() > 0 && !L->peekNext()) 
+	{
+        L->eraseAfter();
+    }
 }
 
-const int power = 9;
-const ListElement base = pow10(power);
-//---= Constructors & Destructors =---
-
-//Constructing an empty Big Number
-BigInteger::BigInteger()
+List tempMult(long s, List *b, int* ctr) 
 {
-	signum = 0;
-}
-//Constructing the Big Number
-BigInteger::BigInteger(std::string s)
-{
-	//Checking if the input string is empty
-	if (s == "")
-	{
-		throw std::invalid_argument("BigInteger: Constructor: empty string");
-	}
-	
-	//Checking if the input string is not a number
-	std::size_t notNumber = s.find_first_not_of("+-0123456789");
-	if (notNumber != std::string::npos)
-	{
-		throw std::invalid_argument("BigInteger: Constructor: non-numeric string");
-
-	}
-
-	//Getting the sign of the number
-	if (s[0] == '-')
-	{
-		signum = -1;
-	}
-	else if (s[0] == 0)
-	{
-		signum = 0;
-	}
-	else
-	{
-		signum = 1;
-	}
-	
-	//Getting the number from the string
-	size_t startingIndex = 0;
-	int sizeOfFirst = 0;
-	//Checking if there is a sign
-	if (s[0] == '+' || s[0] == '-')
-	{
-		startingIndex = 1;
-		sizeOfFirst = (s.size() - 1) % POWER;
-
-	}
-	else
-	{
-		sizeOfFirst = s.size() % POWER;
-	}
-
-	//Looping through getting number
-	for (size_t i = startingIndex; i < s.size();)
-
-	{
-		std::string nodeValue;
-		if (digits.length() == 0 && sizeOfFirst != 0)
-		{
-			nodeValue = s.substr(i, sizeOfFirst);
-			i += sizeOfFirst;
-		}
-		else
-		{
-			nodeValue = s.substr(i, POWER);
-			i += POWER;
-		}
-		digits.insertBefore(stol(nodeValue));
-	}
-
-	//Getting rid of leading zeros
-	digits.moveFront();
-	if (digits.length() == 1) //If we have a single 0
-	{
-		return;
-	}
-	while (digits.position() < digits.length())
-	{
-		if (digits.moveNext() == 0)
-		{
-			digits.eraseBefore();
-		}
-		else
-		{
-			break;
-		}
-	}
-}		
-
-//Copying a Big Number
-
-BigInteger::BigInteger(const BigInteger& n)
-
-{
-	signum = n.signum;
-	digits = n.digits;
-}
-
-//Deleting a Big Number
-
-//---= Accessor Functions =---
-
-//Getting the sign of the number
-int BigInteger::sign() const
-{
-	return signum;
-}
-
-//Comparing two numbers
-int BigInteger::compare(const BigInteger& n) const
-{
-	//Checking signs
-	if (this->signum < n.signum)
-	{
-		return -1;
-	}
-	else if (this->signum > n.signum)
-	{
-		return 1;
-	}
-	
-	//Checking the lengths
-	if (this->signum == -1 && n.signum == -1) 
-	{
-		if (this->digits.length() > n.digits.length())
-		{
-			return -1;
-		}
-		else if (this->digits.length() < n.digits.length())
-		{
-			return 1;
-		}
-	}
-	else if (this->signum == 1 && n.signum == 1)
-	{
-		if (this->digits.length() > n.digits.length())
-                {
-                        return 1;
-                }
-                else if (this->digits.length() < n.digits.length())
-                {
-                        return -1;
-                }
-	}
-
-	//Looping through if both signs and length are same
-	int compareInt = 0;
-	List thisDigits = this->digits;
-	List nDigits = n.digits;
-
-	thisDigits.moveFront();
-	nDigits.moveFront();
-
-	while (thisDigits.position() < thisDigits.length())
-	{
-		ListElement thisDigitsVal = thisDigits.moveNext();
-		ListElement nDigitsVal = nDigits.moveNext();
-
-		if (thisDigitsVal > nDigitsVal)
-		{
-			compareInt = 1;
-			thisDigits.moveBack();
-			nDigits.moveBack();
-		}
-		else if (thisDigitsVal < nDigitsVal)
-		{
-			compareInt = -1;
-			thisDigits.moveBack();
-                        nDigits.moveBack();
-		}
-	}
-	//Checking if its negative
-	if (this->signum == -1)
-	{
-		compareInt *= -1;
-	}
-
-	return compareInt;
-}
-
-//---= Manipulation Functions =---
-
-//Making the Big Number 0
-void BigInteger::makeZero()
-{
-	signum = 0;
-	digits.clear();
-}
-
-//Negating the Big Number
-void BigInteger::negate()
-{
-	signum *= -1;
-}
-
-//---= BigInteger Arithmetic Helper Functions =---
-
-//negateList()
-//Changing the sign of each integer in a list 
-//Used in sub()
-void negateList (List& l)
-{
-	l.moveFront();
-	while (l.position() < l.length())
-	{
-		ListElement val = l.moveNext();
-		l.setBefore(-val); 
-	}
-}
-
-//sumList()
-//Overwrites the state of C = A + sgn*B
-//Used in sub() and sum()
-void sumList (List& C, List A, List B, int sign)
-{
-	//Making sure that C is empty
-	if (C.length() > 0)
-	{
-		C.clear();
-	}
-
-	A.moveBack();
-        B.moveBack();
-	long currentSum = 0;
-	while (A.position() > 0 || B.position() > 0)
-	{
-		if (sign == 1)
-		{
-			if (B.position() == 0)
-			{
-				currentSum = A.movePrev();
-			}
-			else if (A.position() == 0)
-			{
-				currentSum = B.movePrev();
-			}
-			else
-			{
-				currentSum = A.movePrev() + B.movePrev();
-			}
-		}
-		else if (sign == -1)
-		{
-			if (B.position() == 0)
-			{
-				currentSum = A.movePrev();
-			}
-			else if (A.position() == 0)
-			{
-				currentSum = -B.movePrev();
-			}
-			else
-			{
-				currentSum = A.movePrev() - B.movePrev();
-			}
-		}
-		C.insertAfter(currentSum);
-	}
-}
-
-// normalizeList()
-// Performs carries from right to left (least to most significant
-// digits), then returns the sign of the resulting integer. Used
-// by add(), sub() and mult().
-void normalizeList(List& L)
-{
-	//Normalizing
-        List normList;
-	long carryOver = 0;
-        long newVal = 0;
-        long currentVal = 0;
-        L.moveBack();
-        while (L.position() > 0)
-        {
-                currentVal = L.movePrev();
-                newVal = currentVal % BASE;
-                newVal += carryOver;
-                normList.insertAfter(newVal);
-                carryOver = currentVal / BASE;
-        }
-        if (carryOver > 0)
-        {
-                normList.insertAfter(carryOver);
-        }
-        L = normList;
-}
-
-// helper function that normalize mult function
-void normalizeMult(List& l) {
+    List L;
     long carry = 0;
-    ListElement x;
-    l.moveBack();
-    while (l.position() > 0) {
-        x = l.movePrev();
-        if (carry != 0) {
-            x += carry;
-            carry = 0;
-        }
+    long temp = 0;
+    for (b->moveBack(); b->position() > 0; b->movePrev()) 
+	{
+        temp = (b->peekPrev() * s) + carry;
+        carry = temp / BASE;
+        temp %= BASE;
+        L.insertAfter(temp);
+    }
+    if (carry > 0) 
+	{
+        L.insertAfter(carry);
+    }
+    L.moveBack();
+    for (int i = 0; i < *ctr; i++) 
+	{
+        L.insertAfter(0);
+    }
+    return L;
+}
 
-        if (x >= base) {
-            carry = x / base;
-            x %= base;
-            l.setAfter(x);
+// BigInteger Constructors---------------------------------------------------------------------------------------------------------
+BigInteger::BigInteger() 
+{
+    signum = 0;
+    digits = List();
+}
+
+// Constructor that creates a new BigInteger from the long value x.
+BigInteger::BigInteger(long x) 
+{
+    // Handle zero separately
+    if (x == 0) 
+	{
+        signum = 0;
+        digits.insertAfter(0);
+        return;
+    }
+    // Handle negative numbers
+    if (x < 0) 
+	{
+        signum = -1;
+        x = -x;
+    } 
+	else 
+	{
+        signum = 1;
+    }
+    // Extract digits from the long value
+    while (x > 0) 
+	{
+        digits.insertBefore(x % BASE);
+        x /= BASE;
+    }
+}
+
+BigInteger::BigInteger(string s) 
+{
+	// If there is an empty string
+    if (!s.length()) 
+	{
+        throw std::invalid_argument("BigInteger: Constructor: empty string");
+    }
+    
+	// Checking and setting sign
+	int offset = 0;
+    if ((s[0] == '+') | (s[0] == '-')) 
+	{
+        signum = 1;
+        if (s[0] == '-') 
+		{
+            signum = -1;
+        }
+        offset = 1;
+        s = s.substr(offset, s.length() - 1);
+    } 
+	else 
+	{
+        signum = 1;
+    }
+
+	// Checking if string is a valid number
+	for (long unsigned int i = 0; i < s.length(); ++i)
+	{
+		if (!isdigit(s[i]))
+		{
+			throw invalid_argument("BigInteger string constructor is non-numeric");
+		}
+	}
+
+    std::string num = "";
+    List L;
+    size_t max = 0;
+    size_t curr_digits = s.length();
+    // Divide the input string into chunks of POWER digits and convert each chunk to a number
+    while (max < s.length() / POWER) {
+        num = s.substr(curr_digits - POWER, POWER);
+        digits.insertAfter(std::stol(num, nullptr, 10));
+        curr_digits = curr_digits - POWER;
+        max++;
+    }
+    // If there are remaining digits, convert them to a number and insert them
+    if (curr_digits > 0) {
+        num = s.substr(0, curr_digits);
+        digits.insertAfter(std::stol(num, nullptr, 10));
+    }
+
+    delZero(&digits);  // Remove leading zeros from the digits list
+}
+
+BigInteger::BigInteger(const BigInteger& N) {
+    this->signum = N.signum;
+    this->digits = N.digits;
+}
+
+// Access Functions -----
+int BigInteger::sign() const{
+    return this->signum;
+}
+
+int BigInteger::compare(const BigInteger& N) const {
+    // Simple case, compare signs
+    if (signum > N.signum) {
+        return 1;
+    }
+    else if (signum < N.signum) {
+        return -1;
+    }
+    else if (signum == 0 && N.signum == 0) {
+        return 0;
+    }
+    // Same sign, do checks
+    const List& A = digits;
+    const List& B = N.digits;
+    int length = A.length();
+    if (length != B.length()) {
+        // If lengths differ, the longer list is larger
+        return (length > B.length()) ? signum : -N.signum;
+    }
+    // Create copies of A and B to avoid modifying the originals
+    List A_copy = A;
+    List B_copy = B;
+    // Move cursors to the front of the lists
+    A_copy.moveFront();
+    B_copy.moveFront();
+    // Compare digits element by element
+    for (int i = 0; i < length; ++i) {
+        if (A_copy.peekNext() > B_copy.peekNext()) {
+            // Current digit in A is larger, so A is larger overall
+            return signum;
+        }
+        else if (A_copy.peekNext() < B_copy.peekNext()) {
+            // Current digit in B is larger, so B is larger overall
+            return -N.signum;
+        }
+        // Move cursors to the next element
+        A_copy.moveNext();
+        B_copy.moveNext();
+    }
+    // All digits are equal
+    return 0;
+}
+
+// Manipulation Procedures -----
+void BigInteger::makeZero() {
+    digits.clear();
+    signum = 0;
+}
+
+void BigInteger::negate() {
+    signum *= -1;
+}
+
+// BigInteger Arithmetic operations---------------------------------------------------------------------------------------------------------
+// add()
+// Returns a BigInteger representing the sum of this and N.
+BigInteger BigInteger::add(const BigInteger& N) const {
+    BigInteger X = *this;
+    BigInteger Y = N;
+    BigInteger Z;
+
+    // Handle cases where signs differ
+    if (X.sign() > 0 && Y.sign() < 0) {
+        Y.negate();
+        return X.sub(Y);
+    } else if (X.sign() < 0 && Y.sign() > 0) {
+        X.negate();
+        return Y.sub(X);
+    } else if (X.sign() < 0 && Y.sign() < 0) {
+        X.negate();
+        Y.negate();
+        Z = X.add(Y);
+        Z.negate();
+        return Z;
+    }
+
+    // Ensure X is the smaller BigInteger
+    if (X > Y) {
+        return Y.add(X);
+    }
+
+    List x = X.digits;
+    List y = Y.digits;
+    List z = Z.digits;
+
+    long carry = 0;
+    long temp = 0;
+
+    // Perform addition digit by digit
+    x.moveBack();
+    y.moveBack();
+    while (x.position() > 0 && y.position() > 0) {
+        temp = carry + x.peekPrev() + y.peekPrev();
+        carry = temp / BASE;
+        temp %= BASE;
+        z.insertAfter(temp);
+        x.movePrev();
+        y.movePrev();
+    }
+
+    // Handle remaining digits of Y
+    while (y.position() > 0) {
+        temp = carry + y.peekPrev();
+        carry = temp / BASE;
+        temp %= BASE;
+        z.insertAfter(temp);
+        y.movePrev();
+    }
+
+    // If there is a final carry, insert it
+    if (carry > 0) {
+        z.insertAfter(carry);
+    }
+
+    Z.signum = 1;
+    Z.digits = z;
+    return Z;
+}
+
+// sub()
+// Returns a BigInteger representing the difference of this and N.
+BigInteger BigInteger::sub(const BigInteger& N) const {
+    BigInteger B = *this;
+    BigInteger A = N;
+    BigInteger C;
+    List a = A.digits;
+    List b = B.digits;
+    List c = C.digits;
+
+    // Check for special cases
+    if (A == B) {
+        return C;  // Return zero if A and B are equal
+    }
+    if (A.sign() && !B.sign()) {
+        A.negate();
+        return A;  // Return negation of A if A is positive and B is negative
+    }
+    if (!A.sign() && B.sign()) {
+        return B;  // Return B if A is negative and B is positive
+    }
+    if (A.sign() < 0 && B.sign() > 0) {
+        B.negate();
+        C = A.add(B);
+        C.negate();
+        return C;  // Return (A + (-B)) negated if A is negative and B is positive
+    }
+    if (A.sign() > 0 && B.sign() < 0) {
+        A.negate();
+        C = A.add(B);
+        return C;  // Return (A + (-B)) if A is positive and B is negative
+    }
+    if (A.sign() < 0 && B.sign() < 0) {
+        A.negate();
+        B.negate();
+        C = B.sub(A);
+        C.negate();
+        return C;  // Return (B - A) negated if both A and B are negative
+    }
+    if (A < B) {
+        C = A.sub(B);
+        C.negate();
+        return C;  // Return negation of (A - B) if A is less than B
+    }
+    // Perform digit-by-digit subtraction
+    a.moveBack();
+    b.moveBack();
+    long dist = 0;
+    long temp = 0;
+    int i = b.position();
+    while (!(i <= 0)) {
+        if (a.peekPrev() - dist < b.peekPrev()) {
+            temp = a.peekPrev() + BASE - b.peekPrev() - dist;
+            dist = 1;
         } else {
-            l.setAfter(x);
-        }
-    }
-
-    if (carry != 0) {
-        l.moveFront();
-        l.insertBefore(carry);
-    }
-}
-// shiftList()
-// Prepends p zero digits to L, multiplying L by base^p. Used by mult().
-void shiftList(List& L, int p)
-{
-	L.moveBack();
-	for (int i = 0; i < p; i++)
-	{
-		L.insertAfter(0);
-	}
-}
-
-// scalarMultList()
-// Multiplies L (considered as a vector) by m. Used by mult().
-void scalarMultList(List& L, ListElement m)
-{
-	List productList;
-	L.moveFront();
-	while (L.position() < L.length())
-	{
-		ListElement val = L.moveNext();
-		ListElement valProduct = val * m;
-		productList.insertBefore(valProduct);
-	}
-	L = productList;
-}
-
-//---= BigInteger Arithmetic Functions =---
-
-//Adding two BigIntegers
-//Still need to figure out having two different signs and lenghts
-BigInteger BigInteger::add(const BigInteger& n) const
-{
-	//Copying Lists
-	List thisDigits = this->digits;
-	List nDigits = n.digits;
-	
-	//Checking the signs
-	int nSign = n.signum;
-	int thisSign = this->signum;
-	
-	//Making BigInt copies
-	BigInteger thisInt = *this;
-	BigInteger nInt = n;
-
-	//Intializing BigInteger
-	BigInteger sum;
-	
-	//Adding Lists
-	List listSum;
-	//If Signs are the same
-	if (nSign == thisSign)
-	{
-		sum.signum = thisSign;
-		sumList(listSum, thisDigits, nDigits, 1);
-	}
-
-	//The signs are different
-	else
-	{
-		if (thisInt.signum == -1)
-		{
-			thisInt.negate();
-		}
-		else
-		{
-			nInt.negate();
-		}
-		int biggerAbs = thisInt.compare(nInt);
-		if (biggerAbs == 0)
-                {
-                        BigInteger zero;
-			zero.signum = 0;
-                        return zero;
-                }
-
-		//Figuring out which one has the bigger absolute value
-		if (biggerAbs == 1)
-		{
-			sum.signum = thisSign;
-			sumList(listSum, thisDigits, nDigits, -1);
-		}
-		else
-		{
-			sum.signum = nSign;
-			sumList(listSum, nDigits, thisDigits, -1);
-		}
-	}
-
-	//Normalzing List
-	normalizeList(listSum);
-	
-	//Setting list 
-	sum.digits = listSum;
-
-	return sum;
-}
-
-//Subtracting two BigIntegers
-//using for helper function testing
-BigInteger BigInteger::sub(const BigInteger& n) const
-{
-	BigInteger A = *this;
-	BigInteger B = n;
-	BigInteger difference;
-	int diffSign = A.sign();
-
-	//If A and B have same sign
-	if (A.sign() == B.sign())
-	{
-		if (A > B)
-		{
-			difference.signum = 1;
-			if (diffSign == 1)
-			{
-				sumList(difference.digits, A.digits, B.digits, -1);
-			}
-			else
-			{
-				sumList(difference.digits, B.digits, A.digits, -1);
-			}
-		}
-		else if (A < B)
-		{
-			difference.signum = -1;
-			if (diffSign == 1)
-			{
-				sumList(difference.digits, B.digits, A.digits, -1);
-			}
-			else
-			{
-				sumList(difference.digits, A.digits, B.digits, -1);
-			}
-		}
-		else
-		{
-			difference.signum = 0;
-			return difference;
-		}
-	}
-
-	else
-	{
-		sumList(difference.digits, A.digits, B.digits, 1);
-		difference.signum = A.signum;
-	}
-
-	normalizeList(difference.digits);
-	return difference;
-}
-
-//Multiplying two Big Integers
-BigInteger BigInteger::mult(const BigInteger& n) const
-{
-	//Variables
-	BigInteger product;
-	BigInteger A = *this;
-	BigInteger B = n;
-	ListElement digit;
-	int shift = 0;
-	List temp;
-	
-	//If we have a 0 term
-	if (A.sign() == 0 || B.sign() == 0)
-	{
-		return BigInteger(0);
-	}
-	B.digits.moveBack();
-	while (B.digits.position() > 0)
-	{
-		List temp2 = A.digits;
-		List temp3;
-
-		digit = B.digits.movePrev();
-		scalarMultList(temp2, digit);
-		shiftList(temp2, shift);
-		sumList(temp3, temp, temp2, 1);
-		normalizeMult(temp3);
-
-		if (B.digits.position() == 0) //If we get to the first digit of the number
-		{
-			product.digits = temp3;
-		}
-		temp = temp3;
-		shift++;
-	}
-
-	//Determining sign of product
-	if (A.signum == B.signum)
-	{
-		product.signum = 1;
-	}
-	else
-	{
-		product.signum = -1;
-	}
-
-	return product;
-}
-//---= Other Functions =---
-
-//to_string()
-std::string BigInteger::to_string()
-{
-	std::string s = "", ze, ze2;
-    std::string::size_type t;
-    int x;
-
-    // add negative sign to string if number is negative
-    if (sign() == -1) {
-        s += "-";
-    }
-
-    // remove leading zeros
-    digits.moveFront();
-    while (digits.position() != digits.length()) {
-        if (digits.peekNext() != 0) {
-            break;
-        }
-        digits.moveNext();
-    }
-
-    // print out zero if the number is zero
-    if (digits.position() == digits.length()) {
-        s = "0";
-        return s;
-    }
-
-    // reload zeros
-    for (int i = 0; i < power; i++) {
-        ze += "0";
-    }
-
-    // format output
-    while (digits.position() != digits.length()) {
-        x = digits.moveNext();
-        if (x == 0 && digits.position() != 1) {
-            s += ze;
-        } else if (x < base && digits.position() != 1) {
-            t = (std::to_string(x)).length();
-            while (t < power) {
-                ze2 += "0";
-                t++;
+            temp = a.peekPrev() - dist - b.peekPrev();
+            if (!(a.peekPrev() <= 0)) {
+                dist = 0;
             }
-            s += ze2 + std::to_string(x);
-            ze2 = "";
-        } else {
-            s += std::to_string(x);
         }
+        c.insertAfter(temp);
+        a.movePrev();
+        b.movePrev();
+        i--;
     }
-    return s;
+    while (a.position() > 0) {
+        if (a.peekPrev() - dist < 0) {
+            temp = a.peekPrev() + BASE - 0 - dist;
+            dist = 1;
+        } else {
+            temp = a.peekPrev() - dist - 0;
+            if (!(a.peekPrev() <= 0)) {
+                dist = 0;
+            }
+        }
+        c.insertAfter(temp);
+        a.movePrev();
+    }
+    C.digits = c;
+    delZero(&(C.digits));  // Remove leading zeros from the result
+    C.signum = -1;  // Set the sign of the result to negative
+    return C;
 }
 
+// mult()
+// Returns a BigInteger representing the product of this and N. 
+BigInteger BigInteger::mult(const BigInteger& N) const {
+    BigInteger B = *this;
+    BigInteger A = N;
+    BigInteger C;
+    List a = A.digits;
+    List b = B.digits;
+    int ctr = 0;
+    a.moveBack();
+    b.moveBack();
+    int p = a.position();
+    // Multiply each digit of A with B and accumulate the result in C
+    for (int i = p; i > 0; i--) {
+        List temp = tempMult(a.peekPrev(), &b, &ctr);  // Multiply current digit of A with B
+        BigInteger T;
+        T.signum = 1;
+        T.digits = temp;
+        C = C.add(T);  // Accumulate the result in C
+        a.movePrev();  // Move to the next digit of A
+        ctr++;
+    }
+    C.signum = A.signum * B.signum;  // Determine the sign of the result
+    return C;
+}
 
+// Other Functions ----------------------------------------------------------------------------------------------------
+std::string BigInteger::to_string() {
+    std::string out = "";
+    if (this->signum == 0) {
+        return "0";  // Return "0" if the BigInteger is zero
+    } else if (signum == -1) {
+        out += "-";  // Add a negative sign if the BigInteger is negative
+    }
+    digits.moveFront();
+    // Remove leading zeros from the digits list
+    while (digits.front() == 0 && digits.length() > 1) {
+        digits.eraseAfter();
+    }
+    for (digits.moveFront(); digits.position() < digits.length(); digits.moveNext()) {
+        std::string A = std::to_string(digits.peekNext());
+        std::string B = "";
+        // Pad the number with zeros to ensure each chunk has POWER digits
+        while ((int)(B.length() + A.length()) < POWER && digits.position() != 0) {
+            B += '0';
+        }
+        out += (B + A);  // Concatenate the padded chunk with the output string
+    }
+    return out;
+}
 
-//---= Overriden Operators =----
-
+// Overriden Operators --------------------------------------------------------------------------------------------------------------
 // operator<<()
 // Inserts string representation of N into stream.
-std::ostream& operator<<( std::ostream& stream, BigInteger N )
-{
-	return stream << N.BigInteger::to_string();
+std::ostream& operator<<( std::ostream& stream, BigInteger N ) {
+    return stream<<N.BigInteger::to_string();
 }
 
 // operator==()
-// Returns true if and only if A equals B.
-bool operator==( const BigInteger& A, const BigInteger& B )
-{
-	if (A.compare(B) == 0)
-	{
-		return true;
-	}
-	return false;
+// Returns true if and only if A equals B. 
+bool operator==( const BigInteger& A, const BigInteger& B ) {
+    int i = A.compare(B);
+    return (i == 0) ? true : false;
 }
 
 // operator<()
-// Returns true if and only if A is less than B.
-bool operator<( const BigInteger& A, const BigInteger& B )
-{
-	if (A.compare(B) < 0)
-        {
-                return true;
-        }
-        return false;
+// Returns true if and only if A is less than B. 
+bool operator<( const BigInteger& A, const BigInteger& B ) {
+    int i = A.compare(B);
+    return (i == -1) ? true : false;
 }
 
 // operator<=()
-// Returns true if and only if A is less than or equal to B.
-bool operator<=( const BigInteger& A, const BigInteger& B )
-{
-	if (A.compare(B) <= 0)
-        {
-                return true;
-        }
-        return false;
+// Returns true if and only if A is less than or equal to B. 
+
+bool operator<=( const BigInteger& A, const BigInteger& B ) {
+    int i = A.compare(B);
+    return ((i == 0) || (i == -1)) ? true : false;
 }
 
 // operator>()
-// Returns true if and only if A is greater than B.
-bool operator>( const BigInteger& A, const BigInteger& B )
-{
-	if (A.compare(B) > 0)
-        {
-                return true;
-        }
-        return false;
+// Returns true if and only if A is greater than B. 
+bool operator>( const BigInteger& A, const BigInteger& B ) {
+    int i = A.compare(B);
+    return (i == 1) ? true : false;
 }
+
 // operator>=()
-// Returns true if and only if A is greater than or equal to B.
-bool operator>=( const BigInteger& A, const BigInteger& B )
-{
-	if (A.compare(B) >= 0)
-        {
-                return true;
-        }
-        return false;
+// Returns true if and only if A is greater than or equal to B. 
+bool operator>=( const BigInteger& A, const BigInteger& B ) {
+    int i = A.compare(B);
+    return ((i == 0) || (i == 1)) ? true : false;
 }
 
 // operator+()
-// Returns the sum A+B.
-BigInteger operator+( const BigInteger& A, const BigInteger& B )
-{
-	return A.add(B);
+// Returns the sum A+B. 
+BigInteger operator+( const BigInteger& A, const BigInteger& B ) {
+    return A.add(B);
 }
 
 // operator+=()
-// Overwrites A with the sum A+B.
-BigInteger operator+=( BigInteger& A, const BigInteger& B )
-{
-	A = A.add(B);
-	return A;
+// Overwrites A with the sum A+B. 
+BigInteger operator+=( BigInteger& A, const BigInteger& B ) {
+    BigInteger I = A.add(B);
+    A.digits = I.digits;
+    A.signum = I.signum;
+    return A; 
 }
 
 // operator-()
-// Returns the difference A-B.
-BigInteger operator-( const BigInteger& A, const BigInteger& B )
-{
-	return A.BigInteger::sub(B);
+// Returns the difference A-B. 
+BigInteger operator-( const BigInteger& A, const BigInteger& B ) {
+    return A.sub(B);
 }
 
 // operator-=()
-// Overwrites A with the difference A-B.
-BigInteger operator-=( BigInteger& A, const BigInteger& B )
-{
-	A = A.sub(B);
-	return A;
+// Overwrites A with the difference A-B. 
+BigInteger operator-=( BigInteger& A, const BigInteger& B ) {
+    BigInteger I = A.sub(B);
+    A.digits = I.digits;
+    A.signum = I.signum;
+    return A; 
 }
 
 // operator*()
 // Returns the product A*B. 
-BigInteger operator*( const BigInteger& A, const BigInteger& B )
-{
-	return A.mult(B);
+BigInteger operator*( const BigInteger& A, const BigInteger& B ) {
+    return A.mult(B);
 }
 
 // operator*=()
 // Overwrites A with the product A*B. 
-BigInteger operator*=( BigInteger& A, const BigInteger& B )
-{
-	A = A.mult(B);
-	return A;
+BigInteger operator*=( BigInteger& A, const BigInteger& B ) {
+    BigInteger I = A.mult(B);
+    A.digits = I.digits;
+    A.signum = I.signum;
+    return A; 
 }
-
-
-
-
-
-
