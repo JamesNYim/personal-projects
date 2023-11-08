@@ -148,49 +148,64 @@ BigInteger::BigInteger(const BigInteger& N)
     this->digits = N.digits;
 }
 
-// Access Functions -----
-int BigInteger::sign() const{
+// -= Access Functions =-
+int BigInteger::sign() const
+{
     return this->signum;
 }
 
-int BigInteger::compare(const BigInteger& N) const {
-    // Simple case, compare signs
-    if (signum > N.signum) {
+int BigInteger::compare(const BigInteger& N) const 
+{
+    // Compare signs
+    if (signum > N.signum) 
+	{
         return 1;
     }
-    else if (signum < N.signum) {
+    else if (signum < N.signum) 
+	{
         return -1;
     }
-    else if (signum == 0 && N.signum == 0) {
+    else if (signum == 0 && N.signum == 0) 
+	{
         return 0;
     }
-    // Same sign, do checks
+
+    // Numbers have same sign
     const List& A = digits;
     const List& B = N.digits;
-    int length = A.length();
-    if (length != B.length()) {
+    int aLength = A.length();
+    int bLength = B.length();
+
+	// If lengths of numbers are different
+	if (aLength != bLength) 
+	{
         // If lengths differ, the longer list is larger
-        return (length > B.length()) ? signum : -N.signum;
+        return (aLength > bLength) ? signum : -N.signum;
     }
-    // Create copies of A and B to avoid modifying the originals
-    List A_copy = A;
-    List B_copy = B;
-    // Move cursors to the front of the lists
-    A_copy.moveFront();
-    B_copy.moveFront();
-    // Compare digits element by element
-    for (int i = 0; i < length; ++i) {
-        if (A_copy.peekNext() > B_copy.peekNext()) {
+    
+	// Create copies of A and B to avoid modifying the originals
+    List aCopy = A;
+    List bCopy = B;
+    
+	// Move cursors to the front of the lists
+    aCopy.moveFront();
+    bCopy.moveFront();
+    
+	// Compare digits element by element
+    for (int i = 0; i < aLength; ++i) 
+	{
+        if (aCopy.peekNext() > bCopy.peekNext()) 
+		{
             // Current digit in A is larger, so A is larger overall
             return signum;
         }
-        else if (A_copy.peekNext() < B_copy.peekNext()) {
+        else if (aCopy.peekNext() < bCopy.peekNext()) {
             // Current digit in B is larger, so B is larger overall
             return -N.signum;
         }
         // Move cursors to the next element
-        A_copy.moveNext();
-        B_copy.moveNext();
+        aCopy.moveNext();
+        bCopy.moveNext();
     }
     // All digits are equal
     return 0;
