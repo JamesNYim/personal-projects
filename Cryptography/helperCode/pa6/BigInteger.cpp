@@ -298,88 +298,122 @@ BigInteger BigInteger::add(const BigInteger& N) const
     return sum;
 }
 
-// sub()
-// Returns a BigInteger representing the difference of this and N.
-BigInteger BigInteger::sub(const BigInteger& N) const {
-    BigInteger B = *this;
-    BigInteger A = N;
-    BigInteger C;
-    List a = A.digits;
-    List b = B.digits;
-    List c = C.digits;
+
+// Subtracts two Big Integers returning a Big Integer
+BigInteger BigInteger::sub(const BigInteger& N) const 
+{
+    BigInteger minuend = *this;
+    BigInteger subtrahend = N;
+    BigInteger difference;
+    List minuendDigits = minuend.digits;
+    List subtrahendDigits = subtrahend.digits;
+    List differenceDigits = difference.digits;
 
     // Check for special cases
-    if (A == B) {
-        return C;  // Return zero if A and B are equal
+
+	// Return 0 if subtrahend and minuend are requal
+    if (subtrahend == minuend) 
+	{
+        return difference;  
     }
-    if (A.sign() && !B.sign()) {
-        A.negate();
-        return A;  // Return negation of A if A is positive and B is negative
+	
+	// Return negation of subtrahend if subtrahend is positive and minuend is negative
+    if (subtrahend.sign() && !minuend.sign()) 
+	{
+        subtrahend.negate();
+        return subtrahend;  
     }
-    if (!A.sign() && B.sign()) {
-        return B;  // Return B if A is negative and B is positive
+
+	// Return minuend if subtrahend is negative and minuend is positive
+    if (!subtrahend.sign() && minuend.sign()) 
+	{
+        return minuend;  
     }
-    if (A.sign() < 0 && B.sign() > 0) {
-        B.negate();
-        C = A.add(B);
-        C.negate();
-        return C;  // Return (A + (-B)) negated if A is negative and B is positive
+
+	// Return (subtrahend + (-minuend)) negated if subtrahend is negative and minuend is positive
+    if (subtrahend.sign() < 0 && minuend.sign() > 0) 
+	{
+        minuend.negate();
+        difference = subtrahend.add(minuend);
+        difference.negate();
+        return difference;  
     }
-    if (A.sign() > 0 && B.sign() < 0) {
-        A.negate();
-        C = A.add(B);
-        return C;  // Return (A + (-B)) if A is positive and B is negative
+
+	// Return (subtrahend + (-minuend)) if subtrahend is positive and minuend is negative
+    if (subtrahend.sign() > 0 && minuend.sign() < 0) 
+	{
+        subtrahend.negate();
+        difference = subtrahend.add(minuend);
+        return difference;  
     }
-    if (A.sign() < 0 && B.sign() < 0) {
-        A.negate();
-        B.negate();
-        C = B.sub(A);
-        C.negate();
-        return C;  // Return (B - A) negated if both A and B are negative
+
+	// Return (minuend - subtrahend) negated if both are negative
+    if (subtrahend.sign() < 0 && minuend.sign() < 0) 
+	{
+        subtrahend.negate();
+        minuend.negate();
+        difference = minuend.sub(subtrahend);
+        difference.negate();
+        return difference;  
     }
-    if (A < B) {
-        C = A.sub(B);
-        C.negate();
-        return C;  // Return negation of (A - B) if A is less than B
+
+	// Return negation of (subtrahend - minuend) if subtrahend is less than minuend
+    if (subtrahend < minuend) 
+	{
+        difference = subtrahend.sub(minuend);
+        difference.negate();
+        return difference;  
     }
+
     // Perform digit-by-digit subtraction
-    a.moveBack();
-    b.moveBack();
+    subtrahendDigits.moveBack();
+    minuendDigits.moveBack();
     long dist = 0;
     long temp = 0;
-    int i = b.position();
-    while (!(i <= 0)) {
-        if (a.peekPrev() - dist < b.peekPrev()) {
-            temp = a.peekPrev() + BASE - b.peekPrev() - dist;
+    int i = minuendDigits.position();
+    while (!(i <= 0)) 
+	{
+        if (subtrahendDigits.peekPrev() - dist < minuendDigits.peekPrev()) 
+		{
+            temp = subtrahendDigits.peekPrev() + BASE - minuendDigits.peekPrev() - dist;
             dist = 1;
-        } else {
-            temp = a.peekPrev() - dist - b.peekPrev();
-            if (!(a.peekPrev() <= 0)) {
+        } 
+		else 
+		{
+            temp = subtrahendDigits.peekPrev() - dist - minuendDigits.peekPrev();
+            if (!(subtrahendDigits.peekPrev() <= 0))
+			{
                 dist = 0;
             }
         }
-        c.insertAfter(temp);
-        a.movePrev();
-        b.movePrev();
+        differenceDigits.insertAfter(temp);
+        subtrahendDigits.movePrev();
+        minuendDigits.movePrev();
         i--;
     }
-    while (a.position() > 0) {
-        if (a.peekPrev() - dist < 0) {
-            temp = a.peekPrev() + BASE - 0 - dist;
+
+    while (subtrahendDigits.position() > 0) 
+	{
+        if (subtrahendDigits.peekPrev() - dist < 0) 
+		{
+            temp = subtrahendDigits.peekPrev() + BASE - 0 - dist;
             dist = 1;
-        } else {
-            temp = a.peekPrev() - dist - 0;
-            if (!(a.peekPrev() <= 0)) {
+        } 
+		else 
+		{
+            temp = subtrahendDigits.peekPrev() - dist - 0;
+            if (!(subtrahendDigits.peekPrev() <= 0)) 
+			{
                 dist = 0;
             }
         }
-        c.insertAfter(temp);
-        a.movePrev();
+        differenceDigits.insertAfter(temp);
+        subtrahendDigits.movePrev();
     }
-    C.digits = c;
-    delZero(&(C.digits));  // Remove leading zeros from the result
-    C.signum = -1;  // Set the sign of the result to negative
-    return C;
+    difference.digits = differenceDigits;
+    delZero(&(difference.digits));  // Remove leading zeros from the result
+    difference.signum = -1;  // Set the sign of the result to negative
+    return difference;
 }
 
 // mult()
