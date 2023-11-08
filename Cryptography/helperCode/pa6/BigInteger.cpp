@@ -418,28 +418,32 @@ BigInteger BigInteger::sub(const BigInteger& N) const
 
 // mult()
 // Returns a BigInteger representing the product of this and N. 
-BigInteger BigInteger::mult(const BigInteger& N) const {
-    BigInteger B = *this;
-    BigInteger A = N;
-    BigInteger C;
-    List a = A.digits;
-    List b = B.digits;
+BigInteger BigInteger::mult(const BigInteger& N) const 
+{
+    BigInteger multiplier = *this;
+    BigInteger multiplicand = N;
+    BigInteger product;
+    List multiplicandDigits = multiplicand.digits;
+    List multiplierDigits = multiplier.digits;
     int ctr = 0;
-    a.moveBack();
-    b.moveBack();
-    int p = a.position();
-    // Multiply each digit of A with B and accumulate the result in C
-    for (int i = p; i > 0; i--) {
-        List temp = tempMult(a.peekPrev(), &b, &ctr);  // Multiply current digit of A with B
+    multiplicandDigits.moveBack();
+    multiplierDigits.moveBack();
+    
+	int p = multiplicandDigits.position();
+    // Multiply each digit of multiplicand with multiplier and accumulate the result in product
+    for (int i = p; i > 0; i--) 
+	{
+        List temp = tempMult(multiplicandDigits.peekPrev(), &multiplierDigits, &ctr);  // Multiply current digit of multiplicand with multiplier
         BigInteger T;
         T.signum = 1;
         T.digits = temp;
-        C = C.add(T);  // Accumulate the result in C
-        a.movePrev();  // Move to the next digit of A
+        product = product.add(T);  // Accumulate the result in C
+        multiplicandDigits.movePrev();  // Move to the next digit of A
         ctr++;
     }
-    C.signum = A.signum * B.signum;  // Determine the sign of the result
-    return C;
+
+    product.signum = multiplicand.signum * multiplier.signum;  // Determine the sign of the result
+    return product;
 }
 
 // Other Functions ----------------------------------------------------------------------------------------------------
