@@ -126,7 +126,7 @@ BigInteger::BigInteger(string s)
     // Divide the input string into chunks of POWER digits and convert each chunk to a number
     while (max < s.length() / POWER) 
 	{
-        num = s.substr(currentDdigits - POWER, POWER);
+        num = s.substr(currentDigits - POWER, POWER);
         digits.insertAfter(std::stol(num, nullptr, 10));
         currentDigits = currentDigits - POWER;
         max++;
@@ -211,80 +211,91 @@ int BigInteger::compare(const BigInteger& N) const
     return 0;
 }
 
-// Manipulation Procedures -----
-void BigInteger::makeZero() {
+// -= Manipulation Procedures =-
+void BigInteger::makeZero() 
+{
     digits.clear();
     signum = 0;
 }
 
-void BigInteger::negate() {
+void BigInteger::negate() 
+{
     signum *= -1;
 }
 
-// BigInteger Arithmetic operations---------------------------------------------------------------------------------------------------------
-// add()
-// Returns a BigInteger representing the sum of this and N.
-BigInteger BigInteger::add(const BigInteger& N) const {
-    BigInteger X = *this;
-    BigInteger Y = N;
-    BigInteger Z;
+// -= Big Integer Arithmetic Functions =-
 
-    // Handle cases where signs differ
-    if (X.sign() > 0 && Y.sign() < 0) {
-        Y.negate();
-        return X.sub(Y);
-    } else if (X.sign() < 0 && Y.sign() > 0) {
-        X.negate();
-        return Y.sub(X);
-    } else if (X.sign() < 0 && Y.sign() < 0) {
-        X.negate();
-        Y.negate();
-        Z = X.add(Y);
-        Z.negate();
-        return Z;
+// Adds two big integers together returning a big int.
+BigInteger BigInteger::add(const BigInteger& N) const 
+{
+    BigInteger addend1 = *this;
+    BigInteger addend2 = N;
+    BigInteger sum;
+
+    // Differing Signs
+    if (addend1.sign() > 0 && addend2.sign() < 0) 
+	{
+        addend2.negate();
+        return addend1.sub(addend2);
+    } 
+	else if (addend1.sign() < 0 && addend2.sign() > 0) 
+	{
+        addend1.negate();
+        return addend2.sub(addend1);
+    } 
+	else if (addend1.sign() < 0 && addend2.sign() < 0) 
+	{
+        addend1.negate();
+        addend2.negate();
+        sum = addend1.add(addend2);
+        sum.negate();
+        return sum;
     }
 
-    // Ensure X is the smaller BigInteger
-    if (X > Y) {
-        return Y.add(X);
+    // Ensure addend1 is the smaller BigInteger
+    if (addend1 > addend2) 
+	{
+        return addend2.add(addend1);
     }
 
-    List x = X.digits;
-    List y = Y.digits;
-    List z = Z.digits;
+    List addend1Digits = addend1.digits;
+    List addend2Digits = addend2.digits;
+    List sumDigits = sum.digits;
 
     long carry = 0;
     long temp = 0;
 
     // Perform addition digit by digit
-    x.moveBack();
-    y.moveBack();
-    while (x.position() > 0 && y.position() > 0) {
-        temp = carry + x.peekPrev() + y.peekPrev();
+    addend1Digits.moveBack();
+    addend2Digits.moveBack();
+    while (addend1Digits.position() > 0 && addend2Digits.position() > 0) {
+        temp = carry + addend1Digits.peekPrev() + addend2Digits.peekPrev();
         carry = temp / BASE;
         temp %= BASE;
-        z.insertAfter(temp);
-        x.movePrev();
-        y.movePrev();
+        sumDigits.insertAfter(temp);
+        addend1Digits.movePrev();
+        addend2Digits.movePrev();
     }
 
     // Handle remaining digits of Y
-    while (y.position() > 0) {
-        temp = carry + y.peekPrev();
+    while (addend2Digits.position() > 0) 
+	{
+        temp = carry + addend2Digits.peekPrev();
         carry = temp / BASE;
         temp %= BASE;
-        z.insertAfter(temp);
-        y.movePrev();
+        sumDigits.insertAfter(temp);
+        addend2Digits.movePrev();
     }
 
     // If there is a final carry, insert it
-    if (carry > 0) {
-        z.insertAfter(carry);
+    if (carry > 0) 
+	{
+        sumDigits.insertAfter(carry);
     }
 
-    Z.signum = 1;
-    Z.digits = z;
-    return Z;
+    sum.signum = 1;
+    sum.digits = sumDigits;;
+    return sum;
 }
 
 // sub()
