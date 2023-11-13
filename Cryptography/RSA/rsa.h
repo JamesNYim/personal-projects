@@ -14,17 +14,23 @@ class rsa
 		BigInteger e;
 		BigInteger d;
 
+		
+		// find n
+		make_n((p, q);
+
+		// make_e
+		make_e(phi);
 
 	public:
 
 		//Empty Constructor
 		rsa();
-
+		
 		//Encrypt
-		encrypt(plainText, e, n) // returns cipher text
+		encrypt(plainText, e, n); // returns cipher text
 
 		//Decrypt
-		decrypt(cipherText, d, n) // returns plain text
+		decrypt(cipherText, d, n); // returns plain text
 		
 		//Signing
 		//rsaSign()?
