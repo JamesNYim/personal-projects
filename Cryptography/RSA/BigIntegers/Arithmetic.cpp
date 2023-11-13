@@ -18,5 +18,9 @@ using namespace std;
 
 int main()
 {
+	BigInteger a = BigInteger(24);
+	BigInteger b = BigInteger(18);
+
+	cout << a.div(6) << endl;
 	return 0;
 }
