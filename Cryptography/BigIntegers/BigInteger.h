@@ -85,6 +85,10 @@ public:
    // Returns a BigInteger representing the product of this and N. 
    BigInteger mult(const BigInteger& N) const;
 
+   // div
+   // Returns a BigInteger representing the quotientwhere N is a long int
+   BigInteger div(const long int N) const;
+
 
    // Other Functions ---------------------------------------------------------
 

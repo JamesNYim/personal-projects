@@ -298,7 +298,6 @@ BigInteger BigInteger::add(const BigInteger& N) const
     return sum;
 }
 
-
 // Subtracts two Big Integers returning a Big Integer
 BigInteger BigInteger::sub(const BigInteger& N) const 
 {
@@ -445,6 +444,44 @@ BigInteger BigInteger::mult(const BigInteger& N) const
     product.signum = multiplicand.signum * multiplier.signum;  // Determine the sign of the result
     return product;
 }
+
+// div()
+// Returns a BigInteger representing the quotient of this and a long int N
+BigInteger BigInteger::div(const long int N) const
+{
+	BigInteger dividend = *this;
+	long int divisor = N;
+	BigInteger quotient;
+	string quotientToString;
+	long int mod = 10; //idk if this works the way I think  it does
+
+	string dividendToString = dividend.to_string();
+	long int i = 0;
+	long int temp = dividendToString[i] - '0';
+
+	while (temp < divisor)
+	{
+		temp = temp * mod + (dividendToString[++i] - '0');
+	}
+
+	while (dividendToString.size() > i)
+	{
+		quotientToString += (temp / divisor) + '0';
+		temp = (temp % divisor) * mod + dividendToString[++i] - '0';
+	}
+
+	if (quotientToString.length() == 0)
+	{
+		quotient = BigInteger(0);
+	}
+	else
+	{
+		quotient = BigInteger(quotientToString);
+	}
+	return quotient;
+}
+
+
 
 // Other Functions ----------------------------------------------------------------------------------------------------
 std::string BigInteger::to_string() {
