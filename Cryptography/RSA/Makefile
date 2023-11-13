@@ -1,12 +1,11 @@
 ## James Yim
 ## Makefile
 
-
-
 CC = g++
-CFLAGS = -std=c++17 -Wall 
+CFLAGS = -Iinclude -std=c++17 -Wall 
 REMOVE = rm -f
 
+HEADERS = $(wildcard include/BigInteger/*.h)
 ALL_SOURCE = $(wildcard *.cpp)
 COMMON_SOURCE = ${shell grep -L "int main(" ${ALL_SOURCE}}
 COMMON_OBJECT = $(COMMON_SOURCE:%.cpp=%.o)
@@ -25,7 +24,7 @@ GDB: clean all
 $(EXECS): %: %.o $(COMMON_OBJECT)
 	$(CC) -o $@ $^
 
-%.o: %.cpp
+%.o: %.cpp $(HEADERS)
 	$(CC) $(CFLAGS) -c $<
 
 cleanScript:
