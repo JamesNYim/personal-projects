@@ -5,7 +5,7 @@ CC = g++
 CFLAGS = -Iinclude -std=c++17 -Wall 
 REMOVE = rm -f
 
-HEADERS = $(wildcard include/BigInteger/*.h)
+HEADERS = $(wildcard include/*.h)
 ALL_SOURCE = $(wildcard *.cpp)
 COMMON_SOURCE = ${shell grep -L "int main(" ${ALL_SOURCE}}
 COMMON_OBJECT = $(COMMON_SOURCE:%.cpp=%.o)
