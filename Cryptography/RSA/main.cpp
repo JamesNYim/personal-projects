@@ -6,8 +6,8 @@
 
 using namespace std;
 
-int main()
+int main(int argc, char* argv[])
 {
-	rsa r = rsa();
+	Rsa a = Rsa();
 	return 0;
 }
