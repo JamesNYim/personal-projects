@@ -13,8 +13,11 @@ int main(int argc, char* argv[])
 	long int plainText = 3;
 	long int e = 65537;
 	long int n = 4296719428;
+	long int d = 573713; 
 	cout << "Plaintext: " << plainText << endl;
 	long int cipherText = a.encrypt(plainText, e, n);
 	cout << "CipherText: " << cipherText << endl;
+	long int decryptedText = a.decrypt(cipherText, d, n);
+	cout << "DecryptedText: " << decryptedText << endl;
 	return 0;
 }
