@@ -1,60 +1,69 @@
 #include <exception>
 #include <iostream>
 #include <fstream>
+#include <stdint.h>
 #include "BigInteger.h"
 //#include "MakePrime.h"
 
 #include "rsa.h"
 using namespace std;
 
+	// -= Helper Functions =-
+	long int powMod(long int a, long int d, long int n)
+	{
+		long int v = 1;
+		long int p = a;
+		while (d > 0)
+		{
+			if (d % 2 != 0)
+			{
+				v = (v * p) % n;
+			}
+			p = (p * p) % n;
+			d = d / 2;
+		}
+		return v;
+	}
 	// -= Constructors =-
 
 	// Initializing rsa values	rsa()
 	Rsa::Rsa()
 	{
-		p = BigInteger();
-		q = BigInteger();
-		n = BigInteger();
-		phi = BigInteger();
-		long int e;
-		d = BigInteger();
+
 	}
 
 	// make_n() p * q = n
-	void Rsa::make_n(BigInteger p, BigInteger q)
+	void Rsa::make_n(long int p, long int q)
 	{
 		n = p * q;
 	}
 
-	void Rsa::make_phi(BigInteger p, BigInteger q)
+	void Rsa::make_phi(long int p, long int q)
 	{
-		BigInteger p1 = p - 1;
-		BigInteger q1 = q - 1;
-		phi = p1 * q1;;
+		phi = (p - 1) * (q - 1);
 	}
 
-	void Rsa::make_e(BigInteger phi)
+	void Rsa::make_e(long int phi)
 	{
 		//phi = phi;
 		e = 65537;
 	}
 
-	void Rsa::make_d(long int e, BigInteger phi)
+	void Rsa::make_d(long int e, long int phi)
 	{
-		BigInteger t = BigInteger(0);
-		BigInteger t1 = BigInteger(1);
+		long int t = 0;
+		long int t1 = 1;
 		long int r1 = e;
-		BigInteger r = phi;
-		BigInteger temp = BigInteger();
+		long int r = phi;
 		while (r1 != 0)
 		{
-			BigInteger q = r.div(r1);
+			long int q = r / r1;
 			
-			BigInteger rTemp = r - (q *r1);
-			BigInteger tTemp = t - (q * t1);
+		    long int rTemp = r - (q *r1);
+			long int tTemp = t - (q * t1);
 
 			r = r1;
-			r1 = temp;
+			r1 = rTemp;
 			t = t1;
 			t1 = tTemp;
 		}
@@ -62,7 +71,8 @@ using namespace std;
 		// If there is no inverse
 		if (r > 1)
 		{
-			throw std::exception("no inverse");
+			cout << "No Inverse" << endl;
+			return;
 		}
 
 		if (t < 0)
@@ -79,10 +89,11 @@ using namespace std;
 		pubKeyFile.open(pubKeyFileName);
 		if (!pubKeyFile)
 		{
-			throw exception("Unable to open to write pub file");
+			cout << "Unable to open file for writing" << endl;
+			return -1;
 		}
-		p = BigInteger(733);
-		q = BigInteger(811);
+		p = 733;
+		q = 811;
 
 		make_phi(p, q);
 		make_e(phi);
@@ -99,4 +110,12 @@ using namespace std;
 		return 0;
 	}
 
+	long int Rsa::encrypt(long int plainText, long int e, long int n)
+	{
+		return powMod(plainText, e, n);
+	}
 
+	long int Rsa::decrypt(long int cipherText, long int d, long int n)
+	{
+		return powMod(cipherText, d, n);
+	}

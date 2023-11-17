@@ -11,25 +11,26 @@ class Rsa
 {
 	// Private Variables
 	private:
-		BigInteger p;
-		BigInteger q;
-		BigInteger n;
-		BigInteger phi;
-		BigInteger e;
-		BigInteger d;
+		long int p;
+		long int q;
+		long int n;
+		long int phi;
+		long int e;
+		long int d;
 
-		
+		//powMod()
+	//	long int powMod(long int a, long int d, long int n);
 		// find n
-		void make_n(BigInteger p, BigInteger q);
+		void make_n(long int p, long int q);
 
 		// make_e
-		void make_e(BigInteger phi);
+		void make_e(long int phi);
 
 		// make_phi
-		void make_phi(BigInteger p, BigInteger q);
+		void make_phi(long int p, long int q);
 
 		// make_d
-		void make_d(long int e, BigInteger phi);
+		void make_d(long int e, long int phi);
 
 	public:
 
@@ -40,10 +41,10 @@ class Rsa
 		int keyGen(string pubKeyFileName);
 
 		//Encrypt
-		BigInteger encrypt(BigInteger plainText, BigInteger e, BigInteger n); // returns cipher text
+		long int encrypt(long int plainText, long int e, long int n); // returns cipher text
 
 		//Decrypt
-		BigInteger decrypt(BigInteger cipherText, BigInteger d, BigInteger n); // returns plain text
+		long int decrypt(long int cipherText, long int d, long int n); // returns plain text
 		
 		//Signing
 		//rsaSign()?
