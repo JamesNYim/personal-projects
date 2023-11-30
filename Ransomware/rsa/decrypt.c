@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
     FILE *output_file;
 
     //Organizing user input
-    while ((opt = getopt(argc, argv, "b:i:n:d:s:vh")) != -1) {
+    while ((opt = getopt(argc, argv, "b:i:o:n:d:s:vh")) != -1) {
         switch (opt) {
         case 'i': input_filename = optarg; break;
         case 'o': output_filename = optarg; break;
