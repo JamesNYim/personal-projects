@@ -106,9 +106,17 @@ void rsa_encrypt_file(FILE *infile, FILE *outfile, mpz_t n, mpz_t e) {
 
     //Reading the file and encrypting
     size_t j;
-
     while (!feof(infile)) {
         j = fread(&block[1], sizeof(uint8_t), block_size - 1, infile);
+		if (feof(infile))
+		{
+			size_t paddingSize = block_size - 1 - j;
+			for (size_t i = 0; i < paddingSize; ++i)
+			{
+				block[j + 1 + i] = paddingSize;
+			}
+			j += paddingSize;
+		}
         mpz_import(m, j + 1, 1, sizeof(uint8_t), 1, 0, block);
         rsa_encrypt(c, m, e, n);
         gmp_fprintf(outfile, "%Zx\n", m);
@@ -133,10 +141,22 @@ void rsa_decrypt_file(FILE *infile, FILE *outfile, mpz_t n, mpz_t d) {
 
     //Reading the file and encrypting
     size_t j;
+	bool isLastBlock = false;
     while (!feof(infile)) {
         gmp_fscanf(infile, "%Zx\n", c);
         rsa_decrypt(m, c, d, n);
         mpz_export(block, &j, 1, sizeof(uint8_t), 0, 0, c);
+
+		if (feof(infile))
+		{
+			isLastBlock = true;
+		}
+
+		if (isLastBlock)
+		{
+			size_t paddingSize = block[j - 1];
+			j -= paddingSize;
+		}
         fwrite(&block[1], sizeof(uint8_t), block_size - 1, outfile);
     }
 }

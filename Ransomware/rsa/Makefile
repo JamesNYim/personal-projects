@@ -35,7 +35,7 @@ format:
 	clang-format -i -style=file *.[ch]
 
 clean:
-	rm -f test keygen encrypt decrypt *.o
+	rm -f test keygen encrypt decrypt *.o *.priv *.pub
 
 debug: all
 
