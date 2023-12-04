@@ -54,7 +54,8 @@ body{
 
 .hireButton{
     background: #FFDEAD;
-    padding: 6px 30px;
+    color: #3d2809;
+    padding: 5px 20px;
     border: none;
     font-size: 16px;
     cursor: pointer;
@@ -63,7 +64,7 @@ body{
 }
 
 .hireButton:hover{
-    color: #FFF8DC;
+    color: #c58b54;
 }
 
 .main{
@@ -165,3 +166,186 @@ body{
     transition: color 0.3s ease;
 }
 
+.seperator{
+    margin: 50px 50px 30px;
+    padding: 10px;
+    background: rgba(248, 206, 143, 0.08);
+    display: inline-block;
+    color: #F5DEB3;
+    border-radius: 12px;
+}
+
+.about{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 80px;
+    padding: 0 50px;
+}
+
+.about img{
+    width: 280px;
+    border-radius: 50px;
+}
+
+.about .info h3{
+    color: white;
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.about .info p{
+    color: whitesmoke;
+    font-size: 14px;
+}
+
+.about .info .hireButton{
+    margin-top: 30px;
+}
+
+.skills{
+    display: flex;
+    justify-content: space-around;
+    padding: 0 50px;
+}
+
+.skills .left{
+    width: 680px;
+}
+
+.skills .left .info h3{
+    color: white;
+    font-size: 30px;
+    margin-bottom: 20px;
+}
+
+.skills .left .info p{
+    color: whitesmoke;
+    font-size: 14px;
+}
+
+.skills .left .hireButton{
+    margin-top:30px;
+    
+}
+
+.skills .right{
+    width: 420px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.skills .right .item{
+    display: flex;
+    background:rgba(248, 206, 143, 0.08);
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+}
+
+.skills .right .item i{
+    font-size: 48px;
+    color:#FFF8DC;
+}
+
+footer{
+    position: relative;
+    background-color: #090a0e;
+    padding: 80px 50px 40px;
+    margin-top: 100px;
+}
+
+footer .start{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: absolute;
+    background-color: #FFDEAD;
+    padding: 30px 25px;
+    border-radius: 15px;
+    width: 70%;
+    top: -16%;
+    left: 15%;
+}
+
+footer .start p{
+    font-size: 13px;
+    width: 35%;
+}
+
+footer .start button{
+    background: transparent;
+    border: 1px solid#090a0e;
+    cursor: pointer;
+    padding: 8px 20px;
+    border-radius: 100px;
+    transition: all 0.5s ease;
+}
+
+footer .start button:hover{
+    background-color: #FFF8DC;
+    border-color: #FFF8DC;
+    
+}
+
+footer .cols{
+    display: flex;
+    align-items: start;
+}
+
+footer .cols .about-col{
+    flex: 3;
+}
+
+footer .cols .about-col h3{
+    color: #FFDEAD;
+     margin-bottom: 20px;
+}
+
+footer .cols .about-col p{
+    color: whitesmoke;
+    font-size: 13px;
+}
+
+footer .cols .links-col{
+    flex: 3;
+}
+
+footer .cols .links-col h4{
+    color: whitesmoke;
+    margin-bottom: 20px;
+}
+
+footer .cols .links-col a{
+    display: block;
+    text-decoration:  none;
+    color: #717f9c;
+    font-size: 14px;
+    line-height: 26px;
+}
+
+footer .cols .links-col a:hover{
+    color: #c58b54;
+}
+
+footer .cols .contact-col{
+    flex: 3;
+}
+
+footer .cols .contact-col h4{
+    color: whitesmoke;
+    margin-bottom: 20px;
+}
+
+footer .cols .contact-col p{
+    display: block;
+    text-decoration: none;
+    color:#717f9c;
+    font-size: 14px;
+    line-height: 26px;
+}
