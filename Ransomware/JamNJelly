@@ -20,13 +20,7 @@ if [ -f "Jam.paid" ]; then
 	numFiles=0
 	for file in * 
 		do
-			if [ "$file" == "rsa" ] ; then
-				continue;
-			elif [ "$file" == "JamNJelly" ] ; then
-				continue;
-			elif [ "$file" == "Jam.paid" ] ; then
-				continue;
-			else
+			if [ "$file" == "Jelly.*" ] ; then
 				numFiles=$((numFiles+1))
 				outfile=${file#*.}
 				echo "$inProgress decrypting $file to $outfile"
@@ -45,6 +39,10 @@ else
 		if [ "$file" == "rsa" ] ; then
 			continue;
 		elif [ "$file" == "JamNJelly" ] ; then
+			continue;
+		elif [ "$file" == "*/" ] ; then
+			continue;
+		elif [ "$file" == "README.md" ] ; then
 			continue;
 		else
 			numFiles=$((numFiles+1))
